@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Часовник</title>
+
+	<script src="suica.min.js"></script>
+
+	<script>
+		function main()
+		{
+			p = new Suica();
+			orthographic(-1000,1000);
+			lookAt([0,0,100],[0,0,0],[0,1,0]);
+			
+			//долно ляво колело
+			gear = group([]).custom({interactive: true});
+				gear.add(cuboid([-75, -50,0],[80, 80, 50]).custom({color: [0.7, 0.7, 0.7]}));
+				gear.add(cuboid([-75, -50,0],[80, 80, 50]). custom({spin: Math.PI/6, color: [0.7, 0.7, 0.7]}));
+				gear.add(cuboid([-75, -50,0],[80, 80, 50]). custom({spin: Math.PI/3, color: [0.7, 0.7, 0.7]}));
+				gear.add(circle([-75, -50,25.1], 30).custom({color: [1,1,1]}));
+			//малкото колело
+			gear2 = group([]).custom({interactive: true});
+			gear2.add(cuboid([0, 0,0],[50, 50, 5]).custom({color: [0.7, 0.7, 0.7]}));
+			gear2.add(cuboid([0, 0,0],[50, 50, 5]). custom({spin: Math.PI/6, color: [0.7, 0.7, 0.7]}));
+			gear2.add(cuboid([0, 0,0],[50, 50, 5]). custom({spin: Math.PI/3, color: [0.7, 0.7, 0.7]}));
+			gear2.add(circle([0, 0,25.1], 20).custom({color: [1,1,1]}));
+			//долно дясно колело
+			gear1 = group([]).custom({interactive: true});
+				gear1.add(cuboid([75, -50, 50],[80, 80, 50]).custom({color: [0.7, 0.7, 0.7]}));
+				gear1.add(cuboid([75, -50, 50],[80, 80, 50]). custom({spin: Math.PI/6, color: [0.7, 0.7, 0.7]}));
+				gear1.add(cuboid([75, -50, 50],[80, 80, 50]). custom({spin: Math.PI/3, color: [0.7, 0.7, 0.7]}));					   
+				gear1.add(circle([75, -50, 90], 30).custom({color: [1,1,1]}));
+			//горното колело	
+			gear = group([]).custom({interactive: true});
+				gear.add(cuboid([0, 90,0],[80, 80, 50]).custom({color: [0.7, 0.7, 0.7]}));
+				gear.add(cuboid([0, 90,0],[80, 80, 50]). custom({spin: Math.PI/6, color: [0.7, 0.7, 0.7]}));
+				gear.add(cuboid([0, 90,0],[80, 80, 50]). custom({spin: Math.PI/3, color: [0.7, 0.7, 0.7]}));
+				gear.add(circle([0, 90,25.1], 30).custom({color: [1,1,1]}));
+			
+			//рамка
+			c = circle([0,0,0], 180);
+			c.mode = Suica.LINE;
+			c.color = [0.2, 0.2, 0.2]
+			
+			//стрелки на часовника
+			s = segment([0,0,0], [100,100,100]).custom({color: [0,0,0]})
+			s1 = segment([0,0,0], [-60,60,60]).custom({color: [0,0,0]})
+			
+			//точки на часовника
+			for(var i = 0; i < 20; i++){
+				var alpha = radians(360 * i/12);
+				
+				var x = 170*Math.cos(alpha);
+				var y = 170*Math.sin(alpha);
+				
+				point([x,y,0]).custom({pointSize: 7, color: [0.7, 0.7, 0.7]})
+			}
+			
+			yes = document.getElementById('yes')
+			no = document.getElementById('no')
+			
+			vurtene = false;
+			p.nextFrame = animate;
+			
+		}
+		//показване на alert за проверка на отговора
+		function alertFunc(){
+				if(yes.checked){
+					alert("Грешен отговор!");
+				}else if(no.checked){
+					alert("Верен отговор!");
+				}
+		}
+		//анимация
+		function animate(){
+			if(vurtene){
+				gear2.spin = -radians(90*(Suica.time));
+				s.spin = radians(5*(Suica.time));
+				s1.spin = radians(1*(Suica.time));
+			}
+		}
+		//бутон [Анимация]
+		function anim(){
+			vurtene = !vurtene;
+		}
+		
+	</script>	
+	<style>
+		body{
+			background: linear-gradient(#4d4d4d,#bfbfbf,White);
+			font-family: Candara;
+		}
+		.page	{
+			border: 3px solid #808080;
+			text-align: center;
+			border-radius: 5px;
+			width: 60%;
+			margin: 2em auto;
+			padding: 3em;
+			height: 700px;
+			box-shadow: 0 30px 30px grey;
+			background-color: #e6e6e6;
+			text-align: justify;
+		}
+		h1{
+			font-size: 3em;
+			text-align: center;
+		}
+		canvas{
+			position: absolute;
+			top: 250px;
+			right: 50px;
+			left: 50px;
+			margin: 130px auto 0 auto;
+			border: solid 2px black;
+			border-radius: 5px;
+		}
+		button{
+			margin: 20px;
+			display: inline;
+			padding: 4px;
+			border-radius: 5px;
+			width: 120px;
+	
+		}
+		label{
+			display:block;
+		}
+		
+		</style>
+	
+</head>
+
+<body onload="main()">
+
+<div class = "page">
+		<h1>Игра</h1>
+		<h3>Задача 2: Натиснете бутон "Анимация" и отговорете дали по този начин трябва да се въртят зъбните колелета?</h3>
+		<label><input type="radio" name="task" id="yes">Да</label>
+		<label><input type="radio" name="task" id="no">Не</label>
+		<button onclick="alertFunc()">Проверка </button>
+		<button onclick="anim()">Анимация</button>
+	</div>
+
+	<noscript>
+		Искаме JavaScript, но няма!
+	</noscript>
+	
+	<canvas width="740" height="400" style="border: solid 1px Black;">
+		Искаме canvas, но няма!
+	</canvas>
+</body>

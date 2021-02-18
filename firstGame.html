@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Игра</title>
+
+	<script src="suica.min.js"></script>
+
+	<script>
+		function main(){
+			p = new Suica();
+			orthographic(-1000,1000);
+			lookAt([0,0,100],[0,0,0],[0,1,0]);
+			
+			p.gl.canvas.addEventListener('mousedown',mouseDown,false);
+			p.gl.canvas.addEventListener('mouseup',mouseUp,false);
+			p.gl.canvas.addEventListener('mousemove',mouseMove,false);
+			
+			//едното колело
+			gear = group([]).custom({interactive: true});
+				gear.add(cuboid([0,0,0],[100, 100, 50]));
+				gear.add(cuboid([0,0,0],[100, 100, 50]). custom({spin: Math.PI/6}));
+				gear.add(cuboid([0,0,0],[100, 100, 50]). custom({spin: Math.PI/3}));
+				gear.add(circle([0,0,25.1], 40).custom({color: [1,1,1]}));
+			
+			//другото колело
+			gear1 = group([]).custom({interactive: true});
+				gear1.add(cuboid([145, 60, 50],[150, 100, 50]));
+				gear1.add(cuboid([145, 60, 50],[150, 100, 50]). custom({spin: radians(22.5)}));
+				gear1.add(cuboid([145, 60, 50],[150, 100, 50]). custom({spin:  radians(45)}));
+				gear1.add(cuboid([145, 60, 50],[150, 100, 50]). custom({spin:  radians(67.5)}));
+				gear1.add(cuboid([145, 60, 50],[150, 100, 50]). custom({spin:  radians(90)}));
+				gear1.add(cuboid([145, 60, 50],[150, 100, 50]). custom({spin:  radians(112.5)}));
+				gear1.add(cuboid([145, 60, 50],[150, 100, 50]). custom({spin:  radians(135)}));
+				gear1.add(cuboid([145, 60, 50],[150, 100, 50]). custom({spin:  radians(157.5)}));
+				
+				gear1.add(circle([145, 60, 80], 60).custom({color: [1,1,1]}));
+			
+			clock = document.getElementById('clock')
+			anticlock = document.getElementById('anticlock')
+			no = document.getElementById('no')
+			
+			//за въртене на колелата
+			vurtene = false;
+			p.nextFrame = animate;
+		}
+		//показване на alert за проверка на отговора
+		function alertFunc(){
+				if(clock.checked){
+					alert("Верен отговор!");
+				}else if(anticlock.checked){
+					alert("Грешен отговор!");
+				}else if(no.checked){
+					alert("Грешен отговор!");
+				}
+		}
+		//въртене
+		function animate(){
+			if(vurtene){
+				gear.spin = -radians(90*Math.sin(Suica.time));
+				gear1.spin = radians(40 *Math.sin(Suica.time));
+			}
+			
+		}
+		//бутон [Анимация]
+		function anim(){
+			vurtene = !vurtene;
+		}
+		//влачене с мишката
+		var obj;
+		function mouseDown(event)
+		{
+			x = event.clientX;
+			y = event.clientY;
+			obj = p.objectAtPoint(x,y);
+		}
+		
+		function mouseUp(event)
+		{
+			obj = undefined;
+		}
+		
+		function mouseMove(event){
+			if (obj){
+			
+				gear.center[0] += event.clientX-x;
+				gear.center[1] -= event.clientY-y;
+			}
+			x = event.clientX;
+			y = event.clientY;
+		}
+		
+		
+	</script>
+			<style>
+		body{
+			background: linear-gradient(#4d4d4d,#bfbfbf,White);
+			font-family: Candara;
+			
+		}
+		.page	{
+			border: 3px solid #808080;
+			text-align: center;
+			border-radius: 5px;
+			width: 60%;
+			margin: 2em auto;
+			padding: 3em;
+			height: 720px;
+			box-shadow: 0 30px 30px grey;
+			background-color: #e6e6e6;
+			text-align: justify;
+		}
+		h1{
+			font-size: 3em;
+			text-align: center;
+			margin-top: 0px;
+		}
+		canvas{
+			position: absolute;
+			top: 250px;
+			right: 50px;
+			left: 50px;
+			margin: 200px auto 0 auto;
+			border: solid 2px black;
+			border-radius: 5px;
+		}
+		button{
+			margin: 6px;
+			display: inline;
+			padding: 4px;
+			border-radius: 5px;
+		}
+		label{
+			display:block;
+			margin-bottom: 8px;
+		}
+		</style>	
+</head>
+
+<body onload = "main()">
+<div class = "page">
+		<h1>Игра</h1>
+		<h3>Задача 1: Ако лявото зъбно колело се завърти обратно на часовниковата стрелка, то в коя посока ще се завърти дясното?</i></h3>
+		<label><input type="radio" name="task" id="clock">По часовниковата стрелка</label>
+		<label><input type="radio" name="task" id="anticlock">Обратно на часовниковата стрелка</label>
+		<label><input type="radio" name="task" id="no">Няма движение</label>
+		<button onclick="alertFunc()">Проверка на отговор</button>
+		<p>Ако сте отговорили грешно, можете да разгледате анимацията по-долу. Доближете с мишката колелата едно до друго и натиснете бутон "Анимация".</p>
+		<button onclick="anim()">Анимация</button>
+		
+	</div>
+	<noscript>
+		Искаме JavaScript, но няма!
+	</noscript>
+	
+	<canvas width="600" height="370" style="border: solid 1px Black;">
+		Искаме canvas, но няма!
+	</canvas>
+	
+</body>
