@@ -1,1 +1,1 @@
-# Project for FMI course
+# Проект - Зъбни колела
